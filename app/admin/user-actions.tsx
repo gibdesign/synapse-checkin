@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 type User = {
   id: string;
@@ -69,7 +69,7 @@ export function AdminActions({ user, canDelete = false }: { user: User; canDelet
           onClick={() => setExpanded(!expanded)}
           className="rounded-full border border-white/10 px-3 py-1 text-xs hover:bg-white/5"
         >
-          {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />} Edit
+          Edit
         </button>
         <button
           onClick={toggleVisibility}

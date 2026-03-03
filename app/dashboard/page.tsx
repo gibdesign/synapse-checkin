@@ -7,6 +7,7 @@ import { Flame, Clock, Snowflake, ShieldAlert } from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
 import { LinkSpinner } from "@/components/link-spinner";
 import { RequestCheckInButton } from "@/components/request-checkin-button";
+import { CheckinNotification } from "@/components/checkin-notification";
 
 export default async function DashboardPage() {
   const session = await getSessionUser();
@@ -31,7 +32,8 @@ export default async function DashboardPage() {
 
   const hasApprovedToday = !!user.lastApprovedDate && user.lastApprovedDate >= dayStart;
   const hasPendingToday = user.checkinRequests.some(r => r.status === "PENDING");
-  const hasRejectedToday = user.checkinRequests.some(r => r.status === "REJECTED");
+  const rejectedToday = user.checkinRequests.find(r => r.status === "REJECTED");
+  const hasRejectedToday = !!rejectedToday;
 
   // Determine gamified status state
   let statusIcon = <Snowflake className="h-24 w-24 text-neutral-200 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]" />;
@@ -54,6 +56,15 @@ export default async function DashboardPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-lg px-6 py-12 md:py-24">
+      {(hasApprovedToday || hasRejectedToday) && (
+        <CheckinNotification
+          approved={hasApprovedToday}
+          rejectionReason={rejectedToday?.rejectionReason}
+        />
+      )}
+      {hasPendingToday && !hasApprovedToday && !hasRejectedToday && (
+        <CheckinNotification pending />
+      )}
       <div className="mb-6 flex items-center justify-between gap-2">
         <Link href="/" prefetch={false} className="inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-white transition">
           ← Leaderboard <LinkSpinner />

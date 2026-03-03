@@ -14,7 +14,7 @@ type Props = {
 const wrapperClass =
   'group relative inline-flex overflow-hidden rounded-full p-[2px] transition-transform duration-300 snappy hover:scale-[1.02]';
 const plainWrapperClass =
-  'inline-flex rounded-full transition-transform duration-300 snappy hover:scale-[1.02]';
+  'inline-flex rounded-full transition-transform duration-300 snappy hover:scale-[1.02] border-0 outline-none [&:focus]:outline-none';
 const innerClass =
   'relative z-[1] flex flex-1 items-center justify-center gap-1.5 rounded-full bg-[#0a0a0a] px-10 py-4 text-sm font-semibold text-white';
 const plainInnerClass =

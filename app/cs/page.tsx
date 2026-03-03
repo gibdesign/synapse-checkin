@@ -45,7 +45,7 @@ export default async function CustomerServicePage() {
                   <p className="font-semibold">{item.user.username} <span className="text-neutral-400">{item.user.telegramUsername}</span></p>
                   <p className="text-sm text-neutral-400">{new Date(item.requestDate).toLocaleString()}</p>
                 </div>
-                <ReviewActions checkinId={item.id} />
+                <ReviewActions checkinId={item.id} username={item.user.username} />
               </div>
             ))
           )}

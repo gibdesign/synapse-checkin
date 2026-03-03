@@ -96,7 +96,21 @@ function getTierVisual(rank: number, totalPlayers: number, currentStreak: number
 export default async function Home() {
   const session = await getSessionUser();
 
-  const leaderboard = await getData();
+  const [leaderboard, userStreak] = await Promise.all([
+    getData(),
+    session ? (async () => {
+      const { prisma } = await import("@/lib/prisma");
+      const { recomputeUserRank } = await import("@/lib/streaks");
+      const user = await prisma.user.findUnique({
+        where: { id: session!.id },
+        select: { streakCount: true, longestStreak: true },
+      });
+      if (!user) return null;
+      const rank = await recomputeUserRank(session!.id);
+      return { streakCount: user.streakCount, longestStreak: user.longestStreak, rank };
+    })() : null,
+  ]);
+
   const topThree = leaderboard.slice(0, 3);
   const rest = leaderboard.slice(3);
 
@@ -137,14 +151,39 @@ export default async function Home() {
       <main className="relative z-20 mx-auto max-w-lg px-5 pb-20 pt-24">
         <section className="glass rounded-3xl p-5">
           <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">What is Checker</p>
-          <h1 className="serif-title mt-2 text-4xl">Check your current streak.</h1>
+          {session ? (
+            <h1 className="serif-title mt-2 text-4xl">Your streak.</h1>
+          ) : (
+            <h1 className="serif-title mt-2 text-4xl">Check your current streak.</h1>
+          )}
           <p className="mt-2 text-sm text-neutral-300">
             Checker is a competitive mini app where your streak is verified daily and ranked publicly.
           </p>
+          {userStreak && (
+            <div className="mt-4 flex items-center gap-4 rounded-2xl border border-fire-orange/20 bg-fire-orange/5 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <Flame className="h-6 w-6 text-fire-orange" />
+                <div>
+                  <p className="text-2xl font-bold text-white">{userStreak.streakCount}<span className="text-sm font-medium text-neutral-400">d</span></p>
+                  <p className="text-[10px] uppercase tracking-wider text-fire-orange">Your streak</p>
+                </div>
+              </div>
+              <div className="h-8 w-px bg-white/10" />
+              <div>
+                <p className="text-lg font-bold text-white">{userStreak.rank > 0 ? `#${userStreak.rank}` : "—"}</p>
+                <p className="text-[10px] uppercase tracking-wider text-neutral-400">Rank</p>
+              </div>
+              <div className="h-8 w-px bg-white/10" />
+              <div>
+                <p className="text-lg font-bold text-white">{userStreak.longestStreak}d</p>
+                <p className="text-[10px] uppercase tracking-wider text-neutral-400">Longest</p>
+              </div>
+            </div>
+          )}
           <div className="mt-4 grid grid-cols-2 gap-3 items-center">
             {session ? (
               <>
-                <ShinyBorderButton href="/dashboard" className="w-full text-center">
+                <ShinyBorderButton href="/dashboard" variant="plain" className="w-full text-center">
                   Go to My Streak
                 </ShinyBorderButton>
                 <Link href="/dashboard/checkins" prefetch={false} className="rounded-full border border-white/20 px-4 py-3 text-center text-sm font-semibold inline-flex items-center justify-center gap-1.5">
