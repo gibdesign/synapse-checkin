@@ -1,6 +1,6 @@
-# Synapse CheckIn
+# Checker
 
-Manual-verification check-in platform with public leaderboard and Telegram-visible identity.
+Gamified manual-verification streak app with public leaderboard and Telegram-visible identity.
 
 ## Key Routes
 
@@ -28,24 +28,23 @@ Manual-verification check-in platform with public leaderboard and Telegram-visib
 
 ## Vercel Deployment
 
-1. Push repo to GitHub.
-2. Import project in Vercel.
-3. Set required env vars:
-   - `DATABASE_URL`
-   - `NEXTAUTH_SECRET`
-   - `NEXTAUTH_URL`
-4. Connect managed Postgres.
-5. Run migrations:
-   - `npm run prisma:migrate`
-6. Confirm post-deploy behaviors:
-   - public leaderboard loads
-   - user dashboard auth works
-   - `/cs` and `/admin` role protection works
-   - check-in approval updates streak/rank
-   - daily reset script available: `npm run daily-reset`
+See **[DEPLOY.md](./DEPLOY.md)** for full steps including:
+
+- Database setup (Neon / Supabase)
+- Environment variables (`.env` → Vercel)
+- Migrations and seed (10 example users)
+- Cron for daily streak reset
 
 ## Notes
 
 - No proof uploads are stored.
 - Check-ins are pending until manual review.
 - Leaderboard order is calculated, never manually assigned.
+
+## UI Structure (shadcn-compatible)
+
+- Reusable UI primitives live in `components/ui` (for example, `status-pill`, `shiny-border-button`, `ethereal-shadow`).
+- Keep shared display components in `components/ui` so composition is predictable and future shadcn migration/additions stay consistent.
+- Utility helpers such as `cn()` are kept in `lib/utils.ts`, which is the expected import path for shadcn-style components.
+
+If a project does not already have `components/ui`, create it first before adding reusable UI components. This avoids scattered component locations and keeps design tokens/variants easier to maintain.

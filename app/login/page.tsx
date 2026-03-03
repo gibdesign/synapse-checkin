@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,13 +26,16 @@ export default function LoginPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-xl px-6 py-24">
+      <div className="mb-6">
+        <Link href="/" className="text-sm text-neutral-400 hover:text-white">← Back to Leaderboard</Link>
+      </div>
       <h1 className="serif-title text-5xl">Login</h1>
-      <form onSubmit={submit} className="glass mt-8 space-y-4 rounded-3xl p-6">
-        <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none" />
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none" />
-        <button className="rounded-full bg-white px-5 py-2 text-black" type="submit">Sign in</button>
+      <form onSubmit={submit} className="glass mt-8 space-y-4 rounded-3xl p-6 border-fire-orange/20">
+        <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none focus:border-fire-orange transition" />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none focus:border-fire-orange transition" />
+        <button className="w-full rounded-full bg-gradient-to-r from-fire-red to-fire-orange px-5 py-4 text-white font-bold transition hover:scale-[1.02]" type="submit">Sign in</button>
       </form>
-      {error ? <p className="mt-4 text-sm text-rose-300">{error}</p> : null}
+      {error ? <p className="mt-4 text-sm text-fire-red">{error}</p> : null}
     </main>
   );
 }

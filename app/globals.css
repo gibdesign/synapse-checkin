@@ -1,17 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030303;
+  --background: #050100;
   --foreground: #ffffff;
   --muted: rgba(255, 255, 255, 0.65);
-  --violet: #8b5cf6;
-  --cyan: #06b6d4;
+  --fire-red: #ef4444;
+  --fire-orange: #f97316;
+  --fire-yellow: #facc15;
   --emerald: #10b981;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-fire-red: var(--fire-red);
+  --color-fire-orange: var(--fire-orange);
+  --color-fire-yellow: var(--fire-yellow);
   --font-sans: var(--font-inter);
   --font-serif: var(--font-serif);
 }
@@ -28,13 +32,13 @@ body {
 }
 
 .glass {
-  background: rgba(10, 10, 10, 0.7);
+  background: rgba(15, 5, 0, 0.7);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 100, 0, 0.1);
 }
 
 .shimmer-text {
-  background: linear-gradient(90deg, #a78bfa 0%, #ffffff 40%, #ffffff 60%, #22d3ee 100%);
+  background: linear-gradient(90deg, #f87171 0%, #ffffff 40%, #ffffff 60%, #fbbf24 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -42,20 +46,26 @@ body {
   animation: shimmer 4s linear infinite;
 }
 
-.orb-violet {
+.orb-fire {
   position: absolute;
   border-radius: 9999px;
   filter: blur(90px);
-  background: rgba(139, 92, 246, 0.4);
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, rgba(249, 115, 22, 0.2) 50%, transparent 100%);
   animation: floatOrb 10s ease-in-out infinite alternate;
 }
 
-.orb-cyan {
+.orb-glow {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(90px);
-  background: rgba(6, 182, 212, 0.35);
+  filter: blur(120px);
+  background: rgba(250, 204, 21, 0.15);
   animation: floatOrb 14s ease-in-out infinite alternate-reverse;
+}
+
+.bw-panel {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(18px);
 }
 
 .ticker-track {
@@ -97,5 +107,14 @@ body {
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes shinyBorderSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

@@ -25,22 +25,26 @@ export default function RegisterPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-xl px-6 py-24">
+      <div className="mb-6">
+        <Link href="/" className="text-sm text-neutral-400 hover:text-white">← Back to Leaderboard</Link>
+      </div>
       <h1 className="serif-title text-5xl">Register</h1>
       <p className="mt-3 text-neutral-400">Telegram username is required for leaderboard visibility.</p>
-      <form onSubmit={submit} className="glass mt-8 space-y-4 rounded-3xl p-6">
+      <form onSubmit={submit} className="glass mt-8 space-y-4 rounded-3xl p-6 border-fire-orange/20">
         {Object.entries(form).map(([key, value]) => (
           <input
             key={key}
+            type={key === "password" ? "password" : "text"}
             value={value}
             onChange={(e) => setForm((prev) => ({ ...prev, [key]: e.target.value }))}
-            placeholder={key}
-            className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none"
+            placeholder={key === "telegramUsername" ? "Telegram (@username)" : key.charAt(0).toUpperCase() + key.slice(1)}
+            className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none focus:border-fire-orange transition"
           />
         ))}
-        <button className="rounded-full bg-white px-5 py-2 text-black" type="submit">Create account</button>
+        <button className="w-full rounded-full bg-gradient-to-r from-fire-red to-fire-orange px-5 py-4 text-white font-bold transition hover:scale-[1.02]" type="submit">Create account</button>
       </form>
-      {message ? <p className="mt-4 text-sm text-cyan-300">{message}</p> : null}
-      <Link href="/login" className="mt-4 block text-sm text-neutral-400">Already have an account</Link>
+      {message ? <p className="mt-4 text-sm text-fire-yellow">{message}</p> : null}
+      <Link href="/login" className="mt-6 block text-center text-sm text-neutral-400 hover:text-white transition">Already have an account? Sign In</Link>
     </main>
   );
 }

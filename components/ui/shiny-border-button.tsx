@@ -1,18 +1,49 @@
+'use client';
+
+import Link from 'next/link';
+
 type Props = {
   children: React.ReactNode;
   className?: string;
+  href?: string;
+  type?: 'button' | 'submit';
 };
 
-export function ShinyBorderButton({ children, className = "" }: Props) {
+const wrapperClass =
+  'group relative inline-flex overflow-hidden rounded-full p-[2px] transition-transform duration-300 snappy hover:scale-[1.02]';
+const innerClass =
+  'relative z-[1] flex flex-1 items-center justify-center rounded-full bg-[#0a0a0a] px-10 py-4 text-sm font-semibold text-white';
+// Solid orange border with a thin sweeping gap - always visible, clean one-direction sweep
+const gradientClass =
+  'absolute inset-[-100%] animate-spin [animation-duration:3s]';
+const gradientStyle = {
+  background: 'conic-gradient(from 0deg, #f97316 0%, #f97316 92%, transparent 96%, transparent 100%)',
+};
+
+export function ShinyBorderButton({
+  children,
+  className = '',
+  href,
+  type = 'button',
+}: Props) {
+  const content = (
+    <>
+      <span className={gradientClass} style={gradientStyle} aria-hidden />
+      <span className={innerClass}>{children}</span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className={`${wrapperClass} ${className}`}>
+        {content}
+      </Link>
+    );
+  }
+
   return (
-    <button
-      className={`group relative overflow-hidden rounded-full p-px transition-transform duration-300 snappy hover:scale-[1.02] ${className}`}
-      type="button"
-    >
-      <span className="absolute inset-[-50%] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0%,#8b5cf6_40%,#06b6d4_50%,transparent_60%)]" />
-      <span className="relative z-10 block rounded-full bg-[#0a0a0a] px-10 py-4 text-sm font-semibold text-white">
-        {children}
-      </span>
+    <button type={type} className={`${wrapperClass} ${className}`}>
+      {content}
     </button>
   );
 }
