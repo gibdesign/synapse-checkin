@@ -9,7 +9,7 @@ async function main() {
   // 1. Create ADMIN user (hidden from leaderboard)
   const admin = await prisma.user.upsert({
     where: { email: "admin@example.com" },
-    update: {},
+    update: { passwordHash },
     create: {
       email: "admin@example.com",
       username: "admin_user",
@@ -28,7 +28,7 @@ async function main() {
   // 2. Create CS user (hidden from leaderboard)
   const cs = await prisma.user.upsert({
     where: { email: "cs@example.com" },
-    update: {},
+    update: { passwordHash },
     create: {
       email: "cs@example.com",
       username: "cs_team",
@@ -57,7 +57,7 @@ async function main() {
   for (const u of users) {
     await prisma.user.upsert({
       where: { email: u.email },
-      update: {},
+      update: { passwordHash },
       create: {
         email: u.email,
         username: u.username,
