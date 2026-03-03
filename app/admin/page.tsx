@@ -23,7 +23,7 @@ export default async function AdminPage() {
         </div>
         <LogoutButton />
       </div>
-      <AddDummyUser />
+      <AddDummyUser canCreateCS />
       <div className="mt-8">
         <SortableUserList
           users={users.map((u) => ({
@@ -38,6 +38,7 @@ export default async function AdminPage() {
             createdAt: u.createdAt,
           }))}
           canDelete
+          canDeleteRoles={["USER", "CS"]}
         />
       </div>
     </main>

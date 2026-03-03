@@ -48,9 +48,12 @@ function SortHeader({
 export function SortableUserList({
   users,
   canDelete = false,
+  canDeleteRoles,
 }: {
   users: User[];
   canDelete?: boolean;
+  /** When set, only users with these roles can be deleted (e.g. ["USER"] for CS, ["USER","CS"] for Admin) */
+  canDeleteRoles?: string[];
 }) {
   const [sort, setSort] = useState<{ key: SortKey; asc: boolean }>({ key: "streak", asc: false });
 
@@ -112,7 +115,7 @@ export function SortableUserList({
                   leaderboardVisible: u.leaderboardVisible,
                   role: u.role,
                 }}
-                canDelete={canDelete}
+                canDelete={canDelete && (!canDeleteRoles || canDeleteRoles.includes(u.role))}
               />
             </div>
           </div>

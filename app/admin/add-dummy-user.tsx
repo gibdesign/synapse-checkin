@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, UserPlus } from "lucide-react";
 
-export function AddDummyUser() {
+export function AddDummyUser({ canCreateCS = false }: { canCreateCS?: boolean }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -12,6 +12,7 @@ export function AddDummyUser() {
   const [email, setEmail] = useState("");
   const [telegram, setTelegram] = useState("@");
   const [streak, setStreak] = useState(0);
+  const [role, setRole] = useState<"USER" | "CS">("USER");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +27,7 @@ export function AddDummyUser() {
           email: email.trim().toLowerCase(),
           telegramUsername: telegram.trim().startsWith("@") ? telegram.trim() : `@${telegram.trim()}`,
           streakCount: Math.max(0, Number(streak)),
+          role: canCreateCS ? role : "USER",
         }),
       });
       const data = await res.json();
@@ -37,6 +39,7 @@ export function AddDummyUser() {
       setEmail("");
       setTelegram("@");
       setStreak(0);
+      setRole("USER");
       router.refresh();
     } finally {
       setLoading(false);
@@ -80,6 +83,16 @@ export function AddDummyUser() {
           placeholder="Streak"
           className="rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm outline-none focus:border-fire-orange"
         />
+        {canCreateCS && (
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as "USER" | "CS")}
+            className="rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm outline-none focus:border-fire-orange"
+          >
+            <option value="USER">User</option>
+            <option value="CS">CS</option>
+          </select>
+        )}
         <button
           type="submit"
           disabled={loading}

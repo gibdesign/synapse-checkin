@@ -68,6 +68,8 @@ export default async function CustomerServicePage() {
               role: u.role,
               createdAt: u.createdAt,
             }))}
+            canDelete
+            canDeleteRoles={["USER"]}
           />
         </div>
       </section>

@@ -56,16 +56,21 @@ export async function POST(req: Request) {
     telegramUsername: string;
     streakCount?: number;
     longestStreak?: number;
+    role?: "USER" | "CS";
   };
 
   const username = String(body.username || "").trim();
   const email = String(body.email || "").trim().toLowerCase();
   const telegramUsername = String(body.telegramUsername || "").trim();
+  const role = body.role === "CS" ? "CS" : "USER";
   if (!username || !email || !telegramUsername) {
     return NextResponse.json({ error: "username, email, telegramUsername required" }, { status: 400 });
   }
   if (!telegramUsername.startsWith("@")) {
     return NextResponse.json({ error: "telegramUsername must start with @" }, { status: 400 });
+  }
+  if (role === "CS" && session!.role !== "ADMIN") {
+    return NextResponse.json({ error: "Only admins can create CS accounts" }, { status: 403 });
   }
 
   const passwordHash = await hashPassword("password123");
@@ -80,6 +85,7 @@ export async function POST(req: Request) {
       email,
       telegramUsername,
       passwordHash,
+      role,
       streakCount,
       longestStreak,
       streakStartDate,
@@ -100,7 +106,7 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   const session = await getSessionUser();
-  if (!session || session.role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!session || (session.role !== "ADMIN" && session.role !== "CS")) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId");
@@ -109,6 +115,7 @@ export async function DELETE(req: Request) {
   const previous = await prisma.user.findUnique({ where: { id: userId } });
   if (!previous) return NextResponse.json({ error: "User not found" }, { status: 404 });
   if (previous.role === "ADMIN") return NextResponse.json({ error: "Cannot delete admin" }, { status: 400 });
+  if (session.role === "CS" && previous.role !== "USER") return NextResponse.json({ error: "CS can only delete regular users" }, { status: 403 });
 
   await prisma.user.delete({ where: { id: userId } });
   revalidateTag("leaderboard", "max");
