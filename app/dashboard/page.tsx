@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { recomputeUserRank } from "@/lib/streaks";
 import { Flame, Clock, Snowflake, ShieldAlert } from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
+import { LinkSpinner } from "@/components/link-spinner";
+import { RequestCheckInButton } from "@/components/request-checkin-button";
 
 export default async function DashboardPage() {
   const session = await getSessionUser();
@@ -13,19 +15,19 @@ export default async function DashboardPage() {
   const today = new Date();
   const dayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  const user = await prisma.user.findUnique({ 
-    where: { id: session.id },
-    include: {
-      checkinRequests: {
-        where: {
-          requestDate: { gte: dayStart }
-        }
-      }
-    }
-  });
+  const [user, rank] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.id },
+      include: {
+        checkinRequests: {
+          where: { requestDate: { gte: dayStart } },
+        },
+      },
+    }),
+    recomputeUserRank(session.id),
+  ]);
 
   if (!user) redirect("/login");
-  const rank = await recomputeUserRank(user.id);
 
   const hasApprovedToday = !!user.lastApprovedDate && user.lastApprovedDate >= dayStart;
   const hasPendingToday = user.checkinRequests.some(r => r.status === "PENDING");
@@ -53,13 +55,19 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto min-h-screen max-w-lg px-6 py-12 md:py-24">
       <div className="mb-6 flex items-center justify-between gap-2">
-        <Link href="/" className="inline-block text-sm text-neutral-400 hover:text-white transition">← Leaderboard</Link>
+        <Link href="/" prefetch={false} className="inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-white transition">
+          ← Leaderboard <LinkSpinner />
+        </Link>
         <div className="flex items-center gap-2">
           {(session.role === "CS" || session.role === "ADMIN") ? (
-            <Link href="/cs" className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold">CS</Link>
+            <Link href="/cs" prefetch={false} className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold inline-flex items-center gap-1">
+              CS <LinkSpinner />
+            </Link>
           ) : null}
           {session.role === "ADMIN" ? (
-            <Link href="/admin" className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold">Admin</Link>
+            <Link href="/admin" prefetch={false} className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold inline-flex items-center gap-1">
+              Admin <LinkSpinner />
+            </Link>
           ) : null}
           <LogoutButton className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold" />
         </div>
@@ -89,13 +97,11 @@ export default async function DashboardPage() {
       <div className="mt-8 flex flex-col gap-3">
         {(!hasApprovedToday && !hasPendingToday) && (
           <form action="/api/checkins/request" method="post" className="w-full">
-            <button className="w-full rounded-full bg-gradient-to-r from-fire-red to-fire-orange py-4 text-center font-bold text-white transition hover:scale-[1.02] shadow-[0_0_20px_-5px_rgba(239,68,68,0.5)]" type="submit">
-              Request Check-In
-            </button>
+            <RequestCheckInButton />
           </form>
         )}
-        <Link className="w-full rounded-full border border-white/10 py-4 text-center font-medium transition hover:bg-white/5" href="/dashboard/checkins">
-          View History
+        <Link className="w-full rounded-full border border-white/10 py-4 text-center font-medium transition hover:bg-white/5 inline-flex items-center justify-center gap-1.5" href="/dashboard/checkins" prefetch={false}>
+          View History <LinkSpinner />
         </Link>
       </div>
       

@@ -6,6 +6,7 @@ import { getSessionUser } from "@/lib/auth";
 import { EtherealShadow } from "@/components/ui/ethereal-shadow";
 import { ShinyBorderButton } from "@/components/ui/shiny-border-button";
 import { LogoutButton } from "@/components/logout-button";
+import { LinkSpinner } from "@/components/link-spinner";
 
 async function getData() {
   try {
@@ -121,11 +122,15 @@ export default async function Home() {
         </div>
         {session ? (
           <div className="flex items-center gap-2">
-            <Link href="/dashboard" className="rounded-full bg-white px-4 py-1 text-sm font-semibold text-black">Dashboard</Link>
+            <Link href="/dashboard" prefetch={false} className="rounded-full bg-white px-4 py-1 text-sm font-semibold text-black inline-flex items-center gap-1.5">
+              Dashboard <LinkSpinner />
+            </Link>
             <LogoutButton className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold" />
           </div>
         ) : (
-          <Link href="/login" className="rounded-full bg-white px-4 py-1 text-sm font-semibold text-black">Open App</Link>
+          <Link href="/login" prefetch={false} className="rounded-full bg-white px-4 py-1 text-sm font-semibold text-black inline-flex items-center gap-1.5">
+            Open App <LinkSpinner />
+          </Link>
         )}
       </header>
 
@@ -142,17 +147,17 @@ export default async function Home() {
                 <ShinyBorderButton href="/dashboard" className="w-full text-center">
                   Go to My Streak
                 </ShinyBorderButton>
-                <Link href="/dashboard/checkins" className="rounded-full border border-white/20 px-4 py-3 text-center text-sm font-semibold">
-                  My Check-Ins
+                <Link href="/dashboard/checkins" prefetch={false} className="rounded-full border border-white/20 px-4 py-3 text-center text-sm font-semibold inline-flex items-center justify-center gap-1.5">
+                  My Check-Ins <LinkSpinner />
                 </Link>
               </>
             ) : (
               <>
-                <ShinyBorderButton href="/register" className="w-full text-center">
+                <ShinyBorderButton href="/register" variant="plain" className="w-full text-center">
                   Start Streak
                 </ShinyBorderButton>
-                <Link href="/login" className="rounded-full border border-white/20 px-4 py-3 text-center text-sm font-semibold">
-                  I Have Account
+                <Link href="/login" prefetch={false} className="rounded-full border border-white/20 px-4 py-3 text-center text-sm font-semibold inline-flex items-center justify-center gap-1.5">
+                  I Have Account <LinkSpinner />
                 </Link>
               </>
             )}
@@ -183,6 +188,7 @@ export default async function Home() {
                     <StatusPill tierLabel={tone.tierLabel} pillClass={tone.pillClass} />
                   </div>
                   <p className="mt-1 text-[9px] uppercase tracking-wider text-neutral-400">Rank #{row.rank}</p>
+                  {row.joinedAt ? <p className="mt-0.5 text-[8px] text-neutral-500">Joined {new Date(row.joinedAt).toLocaleDateString()}</p> : null}
                 </div>
               </div>
             )})}
@@ -203,6 +209,7 @@ export default async function Home() {
                   <div>
                     <p className="text-sm font-semibold">{row.username}</p>
                     <p className="text-[11px] text-neutral-400">{row.telegramUsername}</p>
+                    {row.joinedAt ? <p className="text-[10px] text-neutral-500">Joined {new Date(row.joinedAt).toLocaleDateString()}</p> : null}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

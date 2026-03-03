@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { CheckinStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { LeaderboardEntry } from "@/lib/types";
@@ -8,7 +9,7 @@ function toStatus(hasApprovedToday: boolean, hasPending: boolean): LeaderboardEn
   return "MISSED";
 }
 
-export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
+async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
   if (!process.env.DATABASE_URL) return [];
   const users = await prisma.user.findMany({
     where: {
@@ -23,6 +24,7 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
       longestStreak: true,
       streakStartDate: true,
       lastApprovedDate: true,
+      createdAt: true,
       checkinRequests: {
         where: {
           status: CheckinStatus.PENDING,
@@ -51,6 +53,11 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
       longestStreak: u.longestStreak,
       status: toStatus(hasApprovedToday, u.checkinRequests.length > 0),
       streakStartDate: u.streakStartDate?.toISOString() ?? null,
+      joinedAt: u.createdAt?.toISOString() ?? null,
     };
   });
+}
+
+export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
+  return unstable_cache(fetchLeaderboard, ["leaderboard"], { revalidate: 30, tags: ["leaderboard"] })();
 }

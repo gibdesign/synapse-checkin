@@ -71,7 +71,7 @@ Add these for **Production**, **Preview**, and **Development**:
 |----------|-------|------|
 | `DATABASE_URL` | `postgresql://user:pass@host:5432/db?sslmode=require` | Your Postgres connection string |
 | `AUTH_SECRET` | Random string (32+ chars) | Generate with: `openssl rand -base64 32` |
-| `AUTH_URL` | `https://your-app.vercel.app` | Your Vercel URL (update after first deploy) |
+| `AUTH_URL` | `https://synapse.vercel.app` | Use after adding custom domain |
 | `CRON_SECRET` | Random string | For daily-reset cron job (optional) |
 
 ### Generate AUTH_SECRET
@@ -87,10 +87,11 @@ Copy the output and paste it as `AUTH_SECRET`.
 ## Step 6: Deploy
 
 1. Click **Deploy**
-2. After deploy, copy your app URL (e.g. `https://checker-xxx.vercel.app`)
-3. Go back to **Settings → Environment Variables**
-4. Update `AUTH_URL` to your actual URL (e.g. `https://checker-xxx.vercel.app`)
-5. Redeploy so the new `AUTH_URL` is used
+2. Add custom domain **synapse.vercel.app**:
+   - **Settings → Domains → Add** → `synapse.vercel.app`
+   - If "already in use": remove it from the other project first (Vercel dashboard → that project → Domains → Remove)
+3. `AUTH_URL` is set to `https://synapse.vercel.app`
+4. Redeploy after adding the domain
 
 ---
 

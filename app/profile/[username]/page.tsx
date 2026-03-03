@@ -15,6 +15,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     <main className="mx-auto min-h-screen max-w-4xl px-6 py-24">
       <h1 className="serif-title text-5xl">{user.username}</h1>
       <p className="mt-2 text-neutral-400">{user.telegramUsername}</p>
+      <p className="mt-1 text-sm text-neutral-500">Joined {new Date(user.createdAt).toLocaleDateString()}</p>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         <Card label="Current Streak" value={String(user.streakCount)} />
         <Card label="Longest Streak" value={String(user.longestStreak)} />

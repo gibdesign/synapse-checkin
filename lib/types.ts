@@ -9,4 +9,5 @@ export type LeaderboardEntry = {
   longestStreak: number;
   status: LeaderboardStatus;
   streakStartDate?: string | null;
+  joinedAt?: string | null;
 };

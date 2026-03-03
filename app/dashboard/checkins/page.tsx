@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { SortableCheckinsTable } from "@/components/sortable-checkins-table";
+import { LinkSpinner } from "@/components/link-spinner";
 
 export default async function MyCheckinsPage() {
   const session = await getSessionUser();
@@ -14,25 +17,13 @@ export default async function MyCheckinsPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-6xl px-6 py-24">
-      <h1 className="serif-title text-5xl">My Check-Ins</h1>
-      <div className="mt-8 overflow-x-auto rounded-3xl border border-white/10">
-        <table className="min-w-full text-left text-sm">
-          <thead className="bg-white/5 text-xs uppercase tracking-[0.2em] text-neutral-400">
-            <tr><th className="p-4">Date</th><th>Status</th><th>Reviewed By</th><th>Review Time</th><th>Notes</th></tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.id} className="border-t border-white/5">
-                <td className="p-4">{new Date(row.requestDate).toLocaleString()}</td>
-                <td>{row.status}</td>
-                <td>{row.reviewedBy?.username ?? "-"}</td>
-                <td>{row.reviewTime ? new Date(row.reviewTime).toLocaleString() : "-"}</td>
-                <td>{row.note || row.rejectionReason || "-"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mb-6 flex items-center gap-3">
+        <Link href="/dashboard" prefetch={false} className="inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-white">
+          ← Dashboard <LinkSpinner />
+        </Link>
+        <h1 className="serif-title text-5xl">My Check-Ins</h1>
       </div>
+      <SortableCheckinsTable rows={rows} />
     </main>
   );
 }

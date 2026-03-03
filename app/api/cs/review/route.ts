@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -34,6 +35,7 @@ export async function POST(req: Request) {
   if (approved) {
     await applyApproval(checkin.userId, new Date());
   }
+  revalidateTag("leaderboard", "max");
 
   await writeAuditLog({
     actorId: session.id,
